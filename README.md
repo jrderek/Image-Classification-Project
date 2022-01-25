@@ -1,649 +1,248 @@
-imgaug
-This python library helps you with augmenting images for your machine learning projects. It converts a set of input images into a new, much larger set of slightly altered images.
-
-Build Status codecov Codacy Badge
-
- 	Image	Heatmaps	Seg. Maps	Keypoints	Bounding Boxes,
-Polygons
-Original Input	input images	input heatmaps	input segmentation maps	input keypoints	input bounding boxes
-Gauss. Noise
-+ Contrast
-+ Sharpen	non geometric augmentations, applied to images	non geometric augmentations, applied to heatmaps	non geometric augmentations, applied to segmentation maps	non geometric augmentations, applied to keypoints	non geometric augmentations, applied to bounding boxes
-Affine	affine augmentations, applied to images	affine augmentations, applied to heatmaps	affine augmentations, applied to segmentation maps	affine augmentations, applied to keypoints	affine augmentations, applied to bounding boxes
-Crop
-+ Pad	crop and pad augmentations, applied to images	crop and pad augmentations, applied to heatmaps	crop and pad augmentations, applied to segmentation maps	crop and pad augmentations, applied to keypoints	crop and pad augmentations, applied to bounding boxes
-Fliplr
-+ Perspective	Horizontal flip and perspective transform augmentations, applied to images	Horizontal flip and perspective transform augmentations, applied to heatmaps	Horizontal flip and perspective transform augmentations, applied to segmentation maps	Horizontal flip and perspective transform augmentations, applied to keypoints	Horizontal flip and perspective transform augmentations, applied to bounding boxes
-More (strong) example augmentations of one input image:
-
-64 quokkas
-
-Table of Contents
-Features
-Installation
-Documentation
-Recent Changes
-Example Images
-Code Examples
-Citation
-Features
-Many augmentation techniques
-E.g. affine transformations, perspective transformations, contrast changes, gaussian noise, dropout of regions, hue/saturation changes, cropping/padding, blurring, ...
-Optimized for high performance
-Easy to apply augmentations only to some images
-Easy to apply augmentations in random order
-Support for
-Images (full support for uint8, for other dtypes see documentation)
-Heatmaps (float32), Segmentation Maps (int), Masks (bool)
-May be smaller/larger than their corresponding images. No extra lines of code needed for e.g. crop.
-Keypoints/Landmarks (int/float coordinates)
-Bounding Boxes (int/float coordinates)
-Polygons (int/float coordinates)
-Line Strings (int/float coordinates)
-Automatic alignment of sampled random values
-Example: Rotate image and segmentation map on it by the same value sampled from uniform(-10°, 45°). (0 extra lines of code.)
-Probability distributions as parameters
-Example: Rotate images by values sampled from uniform(-10°, 45°).
-Example: Rotate images by values sampled from ABS(N(0, 20.0))*(1+B(1.0, 1.0))", where ABS(.) is the absolute function, N(.) the gaussian distribution and B(.) the beta distribution.
-Many helper functions
-Example: Draw heatmaps, segmentation maps, keypoints, bounding boxes, ...
-Example: Scale segmentation maps, average/max pool of images/maps, pad images to aspect ratios (e.g. to square them)
-Example: Convert keypoints to distance maps, extract pixels within bounding boxes from images, clip polygon to the image plane, ...
-Support for augmentation on multiple CPU cores
-Installation
-The library supports python 2.7 and 3.4+.
-
-Installation: Anaconda
-To install the library in anaconda, perform the following commands:
-
-conda config --add channels conda-forge
-conda install imgaug
-You can deinstall the library again via conda remove imgaug.
-
-Installation: pip
-Then install imgaug either via pypi (can lag behind the github version):
-
-pip install imgaug
-or install the latest version directly from github:
-
-pip install git+https://github.com/aleju/imgaug.git
-For more details, see the install guide
-
-To deinstall the library, just execute pip uninstall imgaug.
-
-Documentation
-Example jupyter notebooks:
-
-Load and Augment an Image
-Multicore Augmentation
-Augment and work with: Keypoints/Landmarks, Bounding Boxes, Polygons, Line Strings, Heatmaps, Segmentation Maps
-More notebooks: imgaug-doc/notebooks.
-
-Example ReadTheDocs pages:
-
-Quick example code on how to use the library
-Overview of all Augmenters
-API
-More RTD documentation: imgaug.readthedocs.io.
-
-All documentation related files of this project are hosted in the repository imgaug-doc.
-
-Recent Changes
-0.4.0: Added new augmenters, changed backend to batchwise augmentation, support for numpy 1.18 and python 3.8.
-0.3.0: Reworked segmentation map augmentation, adapted to numpy 1.17+ random number sampling API, several new augmenters.
-0.2.9: Added polygon augmentation, added line string augmentation, simplified augmentation interface.
-0.2.8: Improved performance, dtype support and multicore augmentation.
-See changelogs/ for more details.
-
-Example Images
-The images below show examples for most augmentation techniques.
-
-Values written in the form (a, b) denote a uniform distribution, i.e. the value is randomly picked from the interval [a, b]. Line strings are supported by (almost) all augmenters, but are not explicitly visualized here.
-
-meta
-Identity	ChannelShuffle	 	 	 
-Identity	ChannelShuffle	 	 	 
-See also: Sequential, SomeOf, OneOf, Sometimes, WithChannels, Lambda, AssertLambda, AssertShape, RemoveCBAsByOutOfImageFraction, ClipCBAsToImagePlanes
-arithmetic
-Add	Add
-(per_channel=True)	AdditiveGaussianNoise	AdditiveGaussianNoise
-(per_channel=True)	Multiply
-Add	Add per_channel=True	AdditiveGaussianNoise	AdditiveGaussianNoise per_channel=True	Multiply
-Cutout	Dropout	CoarseDropout
-(p=0.2)	CoarseDropout
-(p=0.2, per_channel=True)	Dropout2d
-Cutout	Dropout	CoarseDropout p=0.2	CoarseDropout p=0.2, per_channel=True	Dropout2d
-SaltAndPepper	CoarseSaltAndPepper
-(p=0.2)	Invert	Solarize	JpegCompression
-SaltAndPepper	CoarseSaltAndPepper p=0.2	Invert	Solarize	JpegCompression
-See also: AddElementwise, AdditiveLaplaceNoise, AdditivePoissonNoise, MultiplyElementwise, TotalDropout, ReplaceElementwise, ImpulseNoise, Salt, Pepper, CoarseSalt, CoarsePepper, Solarize
-artistic
-Cartoon	 	 	 	 
-Cartoon	 	 	 	 
-blend
-BlendAlpha
-with EdgeDetect(1.0)	BlendAlphaSimplexNoise
-with EdgeDetect(1.0)	BlendAlphaFrequencyNoise
-with EdgeDetect(1.0)	BlendAlphaSomeColors
-with RemoveSaturation(1.0)	BlendAlphaRegularGrid
-with Multiply((0.0, 0.5))
-BlendAlpha with EdgeDetect1.0	BlendAlphaSimplexNoise with EdgeDetect1.0	BlendAlphaFrequencyNoise with EdgeDetect1.0	BlendAlphaSomeColors with RemoveSaturation1.0	BlendAlphaRegularGrid with Multiply0.0, 0.5
-See also: BlendAlphaMask, BlendAlphaElementwise, BlendAlphaVerticalLinearGradient, BlendAlphaHorizontalLinearGradient, BlendAlphaSegMapClassIds, BlendAlphaBoundingBoxes, BlendAlphaCheckerboard, SomeColorsMaskGen, HorizontalLinearGradientMaskGen, VerticalLinearGradientMaskGen, RegularGridMaskGen, CheckerboardMaskGen, SegMapClassIdsMaskGen, BoundingBoxesMaskGen, InvertMaskGen
-blur
-GaussianBlur	AverageBlur	MedianBlur	BilateralBlur
-(sigma_color=250,
-sigma_space=250)	MotionBlur
-(angle=0)
-GaussianBlur	AverageBlur	MedianBlur	BilateralBlur sigma_color=250, sigma_space=250	MotionBlur angle=0
-MotionBlur
-(k=5)	MeanShiftBlur	 	 	 
-MotionBlur k=5	MeanShiftBlur	 	 	 
-collections
-RandAugment	 	 	 	 
-RandAugment	 	 	 	 
-color
-MultiplyAndAddToBrightness	MultiplyHueAndSaturation	MultiplyHue	MultiplySaturation	AddToHueAndSaturation
-MultiplyAndAddToBrightness	MultiplyHueAndSaturation	MultiplyHue	MultiplySaturation	AddToHueAndSaturation
-Grayscale	RemoveSaturation	ChangeColorTemperature	KMeansColorQuantization
-(to_colorspace=RGB)	UniformColorQuantization
-(to_colorspace=RGB)
-Grayscale	RemoveSaturation	ChangeColorTemperature	KMeansColorQuantization to_colorspace=RGB	UniformColorQuantization to_colorspace=RGB
-See also: WithColorspace, WithBrightnessChannels, MultiplyBrightness, AddToBrightness, WithHueAndSaturation, AddToHue, AddToSaturation, ChangeColorspace, Posterize
-contrast
-GammaContrast	GammaContrast
-(per_channel=True)	SigmoidContrast
-(cutoff=0.5)	SigmoidContrast
-(gain=10)	LogContrast
-GammaContrast	GammaContrast per_channel=True	SigmoidContrast cutoff=0.5	SigmoidContrast gain=10	LogContrast
-LinearContrast	AllChannels-
-HistogramEqualization	HistogramEqualization	AllChannelsCLAHE	CLAHE
-LinearContrast	AllChannels- HistogramEqualization	HistogramEqualization	AllChannelsCLAHE	CLAHE
-See also: Equalize
-convolutional
-Sharpen
-(alpha=1)	Emboss
-(alpha=1)	EdgeDetect	DirectedEdgeDetect
-(alpha=1)	 
-Sharpen alpha=1	Emboss alpha=1	EdgeDetect	DirectedEdgeDetect alpha=1	 
-See also: Convolve
-debug
-See also: SaveDebugImageEveryNBatches
-edges
-Canny	 	 	 	 
-Canny	 	 	 	 
-flip
-Fliplr	Flipud	 
-Fliplr	Flipud	 
-See also: HorizontalFlip, VerticalFlip
-geometric
-Affine	Affine: Modes	 
-Affine	Affine: Modes	 
-Affine: cval	PiecewiseAffine	 
-Affine: cval	PiecewiseAffine	 
-PerspectiveTransform	ElasticTransformation
-(sigma=1.0)	 
-PerspectiveTransform	ElasticTransformation sigma=1.0	 
-ElasticTransformation
-(sigma=4.0)	Rot90	 
-ElasticTransformation sigma=4.0	Rot90	 
-WithPolarWarping
-+Affine	Jigsaw
-(5x5 grid)	 
-WithPolarWarping +Affine	Jigsaw 5x5 grid	 
-See also: ScaleX, ScaleY, TranslateX, TranslateY, Rotate
-imgcorruptlike
-GlassBlur	DefocusBlur	ZoomBlur	Snow	Spatter
-GlassBlur	DefocusBlur	ZoomBlur	Snow	Spatter
-See also: GaussianNoise, ShotNoise, ImpulseNoise, SpeckleNoise, GaussianBlur, MotionBlur, Fog, Frost, Contrast, Brightness, Saturate, JpegCompression, Pixelate, ElasticTransform
-pillike
-Autocontrast	EnhanceColor	EnhanceSharpness	FilterEdgeEnhanceMore	FilterContour
-Autocontrast	EnhanceColor	EnhanceSharpness	FilterEdgeEnhanceMore	FilterContour
-See also: Solarize, Posterize, Equalize, EnhanceContrast, EnhanceBrightness, FilterBlur, FilterSmooth, FilterSmoothMore, FilterEdgeEnhance, FilterFindEdges, FilterEmboss, FilterSharpen, FilterDetail, Affine
-pooling
-AveragePooling	MaxPooling	MinPooling	MedianPooling	 
-AveragePooling	MaxPooling	MinPooling	MedianPooling	 
-segmentation
-Superpixels
-(p_replace=1)	Superpixels
-(n_segments=100)	UniformVoronoi	RegularGridVoronoi: rows/cols
-(p_drop_points=0)	RegularGridVoronoi: p_drop_points
-(n_rows=n_cols=30)
-Superpixels p_replace=1	Superpixels n_segments=100	UniformVoronoi	RegularGridVoronoi: rows/cols p_drop_points=0	RegularGridVoronoi: p_drop_points n_rows=n_cols=30
-RegularGridVoronoi: p_replace
-(n_rows=n_cols=16)	 	 	 	 
-RegularGridVoronoi: p_replace n_rows=n_cols=16	 	 	 	 
-See also: Voronoi, RelativeRegularGridVoronoi, RegularGridPointsSampler, RelativeRegularGridPointsSampler, DropoutPointsSampler, UniformPointsSampler, SubsamplingPointsSampler
-size
-CropAndPad	Crop	 
-CropAndPad	Crop	 
-Pad	PadToFixedSize
-(height'=height+32,
-width'=width+32)	 
-Pad	PadToFixedSize height'=height+32, width'=width+32	 
-CropToFixedSize
-(height'=height-32,
-width'=width-32)	 	 	 
-CropToFixedSize height'=height-32, width'=width-32	 	 	 
-See also: Resize, CropToMultiplesOf, PadToMultiplesOf, CropToPowersOf, PadToPowersOf, CropToAspectRatio, PadToAspectRatio, CropToSquare, PadToSquare, CenterCropToFixedSize, CenterPadToFixedSize, CenterCropToMultiplesOf, CenterPadToMultiplesOf, CenterCropToPowersOf, CenterPadToPowersOf, CenterCropToAspectRatio, CenterPadToAspectRatio, CenterCropToSquare, CenterPadToSquare, KeepSizeByResize
-weather
-FastSnowyLandscape
-(lightness_multiplier=2.0)	Clouds	Fog	Snowflakes	Rain
-FastSnowyLandscape lightness_multiplier=2.0	Clouds	Fog	Snowflakes	Rain
-See also: CloudLayer, SnowflakesLayer, RainLayer
-Code Examples
-Example: Simple Training Setting
-A standard machine learning situation. Train on batches of images and augment each batch via crop, horizontal flip ("Fliplr") and gaussian blur:
-
-import numpy as np
-import imgaug.augmenters as iaa
-
-def load_batch(batch_idx):
-    # dummy function, implement this
-    # Return a numpy array of shape (N, height, width, #channels)
-    # or a list of (height, width, #channels) arrays (may have different image
-    # sizes).
-    # Images should be in RGB for colorspace augmentations.
-    # (cv2.imread() returns BGR!)
-    # Images should usually be in uint8 with values from 0-255.
-    return np.zeros((128, 32, 32, 3), dtype=np.uint8) + (batch_idx % 255)
-
-def train_on_images(images):
-    # dummy function, implement this
-    pass
-
-# Pipeline:
-# (1) Crop images from each side by 1-16px, do not resize the results
-#     images back to the input size. Keep them at the cropped size.
-# (2) Horizontally flip 50% of the images.
-# (3) Blur images using a gaussian kernel with sigma between 0.0 and 3.0.
-seq = iaa.Sequential([
-    iaa.Crop(px=(1, 16), keep_size=False),
-    iaa.Fliplr(0.5),
-    iaa.GaussianBlur(sigma=(0, 3.0))
-])
-
-for batch_idx in range(100):
-    images = load_batch(batch_idx)
-    images_aug = seq(images=images)  # done by the library
-    train_on_images(images_aug)
-Example: Very Complex Augmentation Pipeline
-Apply a very heavy augmentation pipeline to images (used to create the image at the very top of this readme):
-
-import numpy as np
-import imgaug as ia
-import imgaug.augmenters as iaa
-
-# random example images
-images = np.random.randint(0, 255, (16, 128, 128, 3), dtype=np.uint8)
-
-# Sometimes(0.5, ...) applies the given augmenter in 50% of all cases,
-# e.g. Sometimes(0.5, GaussianBlur(0.3)) would blur roughly every second image.
-sometimes = lambda aug: iaa.Sometimes(0.5, aug)
-
-# Define our sequence of augmentation steps that will be applied to every image
-# All augmenters with per_channel=0.5 will sample one value _per image_
-# in 50% of all cases. In all other cases they will sample new values
-# _per channel_.
-
-seq = iaa.Sequential(
-    [
-        # apply the following augmenters to most images
-        iaa.Fliplr(0.5), # horizontally flip 50% of all images
-        iaa.Flipud(0.2), # vertically flip 20% of all images
-        # crop images by -5% to 10% of their height/width
-        sometimes(iaa.CropAndPad(
-            percent=(-0.05, 0.1),
-            pad_mode=ia.ALL,
-            pad_cval=(0, 255)
-        )),
-        sometimes(iaa.Affine(
-            scale={"x": (0.8, 1.2), "y": (0.8, 1.2)}, # scale images to 80-120% of their size, individually per axis
-            translate_percent={"x": (-0.2, 0.2), "y": (-0.2, 0.2)}, # translate by -20 to +20 percent (per axis)
-            rotate=(-45, 45), # rotate by -45 to +45 degrees
-            shear=(-16, 16), # shear by -16 to +16 degrees
-            order=[0, 1], # use nearest neighbour or bilinear interpolation (fast)
-            cval=(0, 255), # if mode is constant, use a cval between 0 and 255
-            mode=ia.ALL # use any of scikit-image's warping modes (see 2nd image from the top for examples)
-        )),
-        # execute 0 to 5 of the following (less important) augmenters per image
-        # don't execute all of them, as that would often be way too strong
-        iaa.SomeOf((0, 5),
-            [
-                sometimes(iaa.Superpixels(p_replace=(0, 1.0), n_segments=(20, 200))), # convert images into their superpixel representation
-                iaa.OneOf([
-                    iaa.GaussianBlur((0, 3.0)), # blur images with a sigma between 0 and 3.0
-                    iaa.AverageBlur(k=(2, 7)), # blur image using local means with kernel sizes between 2 and 7
-                    iaa.MedianBlur(k=(3, 11)), # blur image using local medians with kernel sizes between 2 and 7
-                ]),
-                iaa.Sharpen(alpha=(0, 1.0), lightness=(0.75, 1.5)), # sharpen images
-                iaa.Emboss(alpha=(0, 1.0), strength=(0, 2.0)), # emboss images
-                # search either for all edges or for directed edges,
-                # blend the result with the original image using a blobby mask
-                iaa.SimplexNoiseAlpha(iaa.OneOf([
-                    iaa.EdgeDetect(alpha=(0.5, 1.0)),
-                    iaa.DirectedEdgeDetect(alpha=(0.5, 1.0), direction=(0.0, 1.0)),
-                ])),
-                iaa.AdditiveGaussianNoise(loc=0, scale=(0.0, 0.05*255), per_channel=0.5), # add gaussian noise to images
-                iaa.OneOf([
-                    iaa.Dropout((0.01, 0.1), per_channel=0.5), # randomly remove up to 10% of the pixels
-                    iaa.CoarseDropout((0.03, 0.15), size_percent=(0.02, 0.05), per_channel=0.2),
-                ]),
-                iaa.Invert(0.05, per_channel=True), # invert color channels
-                iaa.Add((-10, 10), per_channel=0.5), # change brightness of images (by -10 to 10 of original value)
-                iaa.AddToHueAndSaturation((-20, 20)), # change hue and saturation
-                # either change the brightness of the whole image (sometimes
-                # per channel) or change the brightness of subareas
-                iaa.OneOf([
-                    iaa.Multiply((0.5, 1.5), per_channel=0.5),
-                    iaa.FrequencyNoiseAlpha(
-                        exponent=(-4, 0),
-                        first=iaa.Multiply((0.5, 1.5), per_channel=True),
-                        second=iaa.LinearContrast((0.5, 2.0))
-                    )
-                ]),
-                iaa.LinearContrast((0.5, 2.0), per_channel=0.5), # improve or worsen the contrast
-                iaa.Grayscale(alpha=(0.0, 1.0)),
-                sometimes(iaa.ElasticTransformation(alpha=(0.5, 3.5), sigma=0.25)), # move pixels locally around (with random strengths)
-                sometimes(iaa.PiecewiseAffine(scale=(0.01, 0.05))), # sometimes move parts of the image around
-                sometimes(iaa.PerspectiveTransform(scale=(0.01, 0.1)))
-            ],
-            random_order=True
-        )
-    ],
-    random_order=True
-)
-images_aug = seq(images=images)
-Example: Augment Images and Keypoints
-Augment images and keypoints/landmarks on the same images:
-
-import numpy as np
-import imgaug.augmenters as iaa
-
-images = np.zeros((2, 128, 128, 3), dtype=np.uint8)  # two example images
-images[:, 64, 64, :] = 255
-points = [
-    [(10.5, 20.5)],  # points on first image
-    [(50.5, 50.5), (60.5, 60.5), (70.5, 70.5)]  # points on second image
-]
-
-seq = iaa.Sequential([
-    iaa.AdditiveGaussianNoise(scale=0.05*255),
-    iaa.Affine(translate_px={"x": (1, 5)})
-])
-
-# augment keypoints and images
-images_aug, points_aug = seq(images=images, keypoints=points)
-
-print("Image 1 center", np.argmax(images_aug[0, 64, 64:64+6, 0]))
-print("Image 2 center", np.argmax(images_aug[1, 64, 64:64+6, 0]))
-print("Points 1", points_aug[0])
-print("Points 2", points_aug[1])
-Note that all coordinates in imgaug are subpixel-accurate, which is why x=0.5, y=0.5 denotes the center of the top left pixel.
-
-Example: Augment Images and Bounding Boxes
-import numpy as np
-import imgaug as ia
-import imgaug.augmenters as iaa
-
-images = np.zeros((2, 128, 128, 3), dtype=np.uint8)  # two example images
-images[:, 64, 64, :] = 255
-bbs = [
-    [ia.BoundingBox(x1=10.5, y1=15.5, x2=30.5, y2=50.5)],
-    [ia.BoundingBox(x1=10.5, y1=20.5, x2=50.5, y2=50.5),
-     ia.BoundingBox(x1=40.5, y1=75.5, x2=70.5, y2=100.5)]
-]
-
-seq = iaa.Sequential([
-    iaa.AdditiveGaussianNoise(scale=0.05*255),
-    iaa.Affine(translate_px={"x": (1, 5)})
-])
-
-images_aug, bbs_aug = seq(images=images, bounding_boxes=bbs)
-Example: Augment Images and Polygons
-import numpy as np
-import imgaug as ia
-import imgaug.augmenters as iaa
-
-images = np.zeros((2, 128, 128, 3), dtype=np.uint8)  # two example images
-images[:, 64, 64, :] = 255
-polygons = [
-    [ia.Polygon([(10.5, 10.5), (50.5, 10.5), (50.5, 50.5)])],
-    [ia.Polygon([(0.0, 64.5), (64.5, 0.0), (128.0, 128.0), (64.5, 128.0)])]
-]
-
-seq = iaa.Sequential([
-    iaa.AdditiveGaussianNoise(scale=0.05*255),
-    iaa.Affine(translate_px={"x": (1, 5)})
-])
-
-images_aug, polygons_aug = seq(images=images, polygons=polygons)
-Example: Augment Images and LineStrings
-LineStrings are similar to polygons, but are not closed, may intersect with themselves and don't have an inner area.
-
-import numpy as np
-import imgaug as ia
-import imgaug.augmenters as iaa
-
-images = np.zeros((2, 128, 128, 3), dtype=np.uint8)  # two example images
-images[:, 64, 64, :] = 255
-ls = [
-    [ia.LineString([(10.5, 10.5), (50.5, 10.5), (50.5, 50.5)])],
-    [ia.LineString([(0.0, 64.5), (64.5, 0.0), (128.0, 128.0), (64.5, 128.0),
-                    (128.0, 0.0)])]
-]
-
-seq = iaa.Sequential([
-    iaa.AdditiveGaussianNoise(scale=0.05*255),
-    iaa.Affine(translate_px={"x": (1, 5)})
-])
-
-images_aug, ls_aug = seq(images=images, line_strings=ls)
-Example: Augment Images and Heatmaps
-Heatmaps are dense float arrays with values between 0.0 and 1.0. They can be used e.g. when training models to predict facial landmark locations. Note that the heatmaps here have lower height and width than the images. imgaug handles that case automatically. The crop pixel amounts will be halved for the heatmaps.
-
-import numpy as np
-import imgaug.augmenters as iaa
-
-# Standard scenario: You have N RGB-images and additionally 21 heatmaps per
-# image. You want to augment each image and its heatmaps identically.
-images = np.random.randint(0, 255, (16, 128, 128, 3), dtype=np.uint8)
-heatmaps = np.random.random(size=(16, 64, 64, 1)).astype(np.float32)
-
-seq = iaa.Sequential([
-    iaa.GaussianBlur((0, 3.0)),
-    iaa.Affine(translate_px={"x": (-40, 40)}),
-    iaa.Crop(px=(0, 10))
-])
-
-images_aug, heatmaps_aug = seq(images=images, heatmaps=heatmaps)
-Example: Augment Images and Segmentation Maps
-This is similar to heatmaps, but the dense arrays have dtype int32. Operations such as resizing will automatically use nearest neighbour interpolation.
-
-import numpy as np
-import imgaug.augmenters as iaa
-
-# Standard scenario: You have N=16 RGB-images and additionally one segmentation
-# map per image. You want to augment each image and its heatmaps identically.
-images = np.random.randint(0, 255, (16, 128, 128, 3), dtype=np.uint8)
-segmaps = np.random.randint(0, 10, size=(16, 64, 64, 1), dtype=np.int32)
-
-seq = iaa.Sequential([
-    iaa.GaussianBlur((0, 3.0)),
-    iaa.Affine(translate_px={"x": (-40, 40)}),
-    iaa.Crop(px=(0, 10))
-])
-
-images_aug, segmaps_aug = seq(images=images, segmentation_maps=segmaps)
-Example: Visualize Augmented Images
-Quickly show example results of your augmentation sequence:
-
-import numpy as np
-import imgaug.augmenters as iaa
-
-images = np.random.randint(0, 255, (16, 128, 128, 3), dtype=np.uint8)
-seq = iaa.Sequential([iaa.Fliplr(0.5), iaa.GaussianBlur((0, 3.0))])
-
-# Show an image with 8*8 augmented versions of image 0 and 8*8 augmented
-# versions of image 1. Identical augmentations will be applied to
-# image 0 and 1.
-seq.show_grid([images[0], images[1]], cols=8, rows=8)
-Example: Visualize Augmented Non-Image Data
-imgaug contains many helper function, among these functions to quickly visualize augmented non-image results, such as bounding boxes or heatmaps.
-
-import numpy as np
-import imgaug as ia
-
-image = np.zeros((64, 64, 3), dtype=np.uint8)
-
-# points
-kps = [ia.Keypoint(x=10.5, y=20.5), ia.Keypoint(x=60.5, y=60.5)]
-kpsoi = ia.KeypointsOnImage(kps, shape=image.shape)
-image_with_kps = kpsoi.draw_on_image(image, size=7, color=(0, 0, 255))
-ia.imshow(image_with_kps)
-
-# bbs
-bbsoi = ia.BoundingBoxesOnImage([
-    ia.BoundingBox(x1=10.5, y1=20.5, x2=50.5, y2=30.5)
-], shape=image.shape)
-image_with_bbs = bbsoi.draw_on_image(image)
-image_with_bbs = ia.BoundingBox(
-    x1=50.5, y1=10.5, x2=100.5, y2=16.5
-).draw_on_image(image_with_bbs, color=(255, 0, 0), size=3)
-ia.imshow(image_with_bbs)
-
-# polygons
-psoi = ia.PolygonsOnImage([
-    ia.Polygon([(10.5, 20.5), (50.5, 30.5), (10.5, 50.5)])
-], shape=image.shape)
-image_with_polys = psoi.draw_on_image(
-    image, alpha_points=0, alpha_face=0.5, color_lines=(255, 0, 0))
-ia.imshow(image_with_polys)
-
-# heatmaps
-hms = ia.HeatmapsOnImage(np.random.random(size=(32, 32, 1)).astype(np.float32),
-                         shape=image.shape)
-image_with_hms = hms.draw_on_image(image)
-ia.imshow(image_with_hms)
-LineStrings and segmentation maps support similar methods as shown above.
-
-Example: Using Augmenters Only Once
-While the interface is adapted towards re-using instances of augmenters many times, you are also free to use them only once. The overhead to instantiate the augmenters each time is usually negligible.
-
-from imgaug import augmenters as iaa
-import numpy as np
-
-images = np.random.randint(0, 255, (16, 128, 128, 3), dtype=np.uint8)
-
-# always horizontally flip each input image
-images_aug = iaa.Fliplr(1.0)(images=images)
-
-# vertically flip each input image with 90% probability
-images_aug = iaa.Flipud(0.9)(images=images)
-
-# blur 50% of all images using a gaussian kernel with a sigma of 3.0
-images_aug = iaa.Sometimes(0.5, iaa.GaussianBlur(3.0))(images=images)
-Example: Multicore Augmentation
-Images can be augmented in background processes using the method augment_batches(batches, background=True), where batches is a list/generator of imgaug.augmentables.batches.UnnormalizedBatch or imgaug.augmentables.batches.Batch. The following example augments a list of image batches in the background:
-
-import skimage.data
-import imgaug as ia
-import imgaug.augmenters as iaa
-from imgaug.augmentables.batches import UnnormalizedBatch
-
-# Number of batches and batch size for this example
-nb_batches = 10
-batch_size = 32
-
-# Example augmentation sequence to run in the background
-augseq = iaa.Sequential([
-    iaa.Fliplr(0.5),
-    iaa.CoarseDropout(p=0.1, size_percent=0.1)
-])
-
-# For simplicity, we use the same image here many times
-astronaut = skimage.data.astronaut()
-astronaut = ia.imresize_single_image(astronaut, (64, 64))
-
-# Make batches out of the example image (here: 10 batches, each 32 times
-# the example image)
-batches = []
-for _ in range(nb_batches):
-    batches.append(UnnormalizedBatch(images=[astronaut] * batch_size))
-
-# Show the augmented images.
-# Note that augment_batches() returns a generator.
-for images_aug in augseq.augment_batches(batches, background=True):
-    ia.imshow(ia.draw_grid(images_aug.images_aug, cols=8))
-If you need more control over the background augmentation, e.g. to set seeds, control the number of used CPU cores or constraint the memory usage, see the corresponding multicore augmentation notebook or the API about Augmenter.pool() and imgaug.multicore.Pool.
-
-Example: Probability Distributions as Parameters
-Most augmenters support using tuples (a, b) as a shortcut to denote uniform(a, b) or lists [a, b, c] to denote a set of allowed values from which one will be picked randomly. If you require more complex probability distributions (e.g. gaussians, truncated gaussians or poisson distributions) you can use stochastic parameters from imgaug.parameters:
-
-import numpy as np
-from imgaug import augmenters as iaa
-from imgaug import parameters as iap
-
-images = np.random.randint(0, 255, (16, 128, 128, 3), dtype=np.uint8)
-
-# Blur by a value sigma which is sampled from a uniform distribution
-# of range 10.1 <= x < 13.0.
-# The convenience shortcut for this is: GaussianBlur((10.1, 13.0))
-blurer = iaa.GaussianBlur(10 + iap.Uniform(0.1, 3.0))
-images_aug = blurer(images=images)
-
-# Blur by a value sigma which is sampled from a gaussian distribution
-# N(1.0, 0.1), i.e. sample a value that is usually around 1.0.
-# Clip the resulting value so that it never gets below 0.1 or above 3.0.
-blurer = iaa.GaussianBlur(iap.Clip(iap.Normal(1.0, 0.1), 0.1, 3.0))
-images_aug = blurer(images=images)
-There are many more probability distributions in the library, e.g. truncated gaussian distribution, poisson distribution or beta distribution.
-
-Example: WithChannels
-Apply an augmenter only to specific image channels:
-
-import numpy as np
-import imgaug.augmenters as iaa
-
-# fake RGB images
-images = np.random.randint(0, 255, (16, 128, 128, 3), dtype=np.uint8)
-
-# add a random value from the range (-30, 30) to the first two channels of
-# input images (e.g. to the R and G channels)
-aug = iaa.WithChannels(
-  channels=[0, 1],
-  children=iaa.Add((-30, 30))
-)
-
-images_aug = aug(images=images)
-Citation
-If this library has helped you during your research, feel free to cite it:
-
-@misc{imgaug,
-  author = {Jung, Alexander B.
-            and Wada, Kentaro
-            and Crall, Jon
-            and Tanaka, Satoshi
-            and Graving, Jake
-            and Reinders, Christoph
-            and Yadav, Sarthak
-            and Banerjee, Joy
-            and Vecsei, Gábor
-            and Kraft, Adam
-            and Rui, Zheng
-            and Borovec, Jirka
-            and Vallentin, Christian
-            and Zhydenko, Semen
-            and Pfeiffer, Kilian
-            and Cook, Ben
-            and Fernández, Ismael
-            and De Rainville, François-Michel
-            and Weng, Chi-Hung
-            and Ayala-Acevedo, Abner
-            and Meudec, Raphael
-            and Laporte, Matias
-            and others},
-  title = {{imgaug}},
-  howpublished = {\url{https://github.com/aleju/imgaug}},
-  year = {2020},
-  note = {Online; accessed 01-Feb-2020}
-}
+Understanding Image Classification
+Introduction
+Motivation
+Image classification problem is the task of assigning an input image one label from a fixed set of categories. This is one of the core problems in Computer Vision that, despite its simplicity, has a large variety of practical applications.
+
+Traditional way: Feature Description and Detection.  Maybe good for some sample task, but the actual situation is far more complicated. 
+
+Therefore, instead of trying to specify what every one of the categories of interest look like directly in code, we're going to use machine learning, which is providing the computer with many examples of each class and then develop learning algorithms that look at these examples and learn about the visual appearance of each class.
+
+However, image classification problem is such a complicated work that always been done with deep learning model like Convolutional Neural Network. We already learnt that many algorithms we studied in class like KNN and SVM usually do a great job on many data mining problems. But it seems that they are sometimes not the best choices for image classification problems.
+
+So we would like to compare the performance among the algorithms we learnt in class and CNN and Transfer Learning.
+
+Objective
+Our Objective is to:
+
+Compare normal algorithms we learnt in class with 2 methods that are usually used in industry on image classification problem, which are CNN and Transfer Learning.
+Gain experience on deep learning.
+Explore the machine learning framework by Google - TensorFlow.
+System Design & Implementation details
+Algorithms and Tools
+The 5 methods we used in this project are KNN, SVM, BP Neural Network, Convolutional Neural Network and Transfer Learning.
+
+The whole project is divided into 3 methods.
+
+The first method: Used KNN, SVM and BP Neural Network, which are algorithms we learnt in class. There are powerful and easy to implement. We mainly used sklearn to implement those algorithms.
+
+The second method: While traditional multilayer perceptron (MLP) models were successfully used for image recognition, due to the full connectivity between nodes they suffer from the curse of dimensionality and thus do not scale well to higher resolution images. So in this part we built a CNN using deep learning frame work by Google - TensorFlow.
+
+The third method: Retrained the last layer of a pre-trained deep neural network called Inception V3, also provided by TensorFlow. Inception V3 is trained for the ImageNet Large Visual Recognition Challenge using the data from 2012. This is a standard task in computer vision, where models try to classify entire images into 1000 classes, like "Zebra", "Dalmatian", and "Dishwasher". In order to retrain this pre-trained network, we need to ensure that our own dataset is not already pretrained.
+
+Implementation
+The first method: Preprocess dataset and apply KNN, SVM and BP Neural Network with sklearn.
+
+Firstly, we defined 2 different preprocessing functions using openCV package:The first one is called image to feature vector, to resize the image and then flatten the image into a list of row pixel. The second one is called extract color histogram, to extract a 3D color histogram from the HSV color spacing using cv2.normalize and then flatten the result.
+
+Then, we construct several arguments we need to parse. Because we want to test the accuracy on this part not only for the whole dataset but also the sub-dataset with different number of labels, we construct the dataset as a arguments parsed into our program. And we also construct the number of neighbors used for k-NN method as a parse argument.
+
+After that, we began to extract each image features in the dataset and put them into arrays. We used the cv2.imread to read each image, split the label out by extract the string from the image name. In our dataset, we set the name with the same format: “class label”.”image number”.jpg, so we can easily extract the class label for each image. Then we used those 2 functions we defined before to extract 2 kinds of features and append to the array rawImages and features, and the label we extracted earlier append to the array labels.
+
+The next step is to split the dataset with the function train_test_split, imported from sklearn package. The set with postfix RI,RL is the split result of the rawImages and labels pair, and another is the split result of the features and labels pair. We use 85% of the dataset as train set, and 15% as the test set.
+
+Finally we applied the KNN, SVM and BP Neural Network functions to evaluate the data. For KNN we used KNeighborsClassifier, for SVM we used SVC, and for BP neural network we used MLPClassifier.
+
+The second method: Built CNN with TensorFlow The entire purpose of TensorFlow is to let you build a computational graph (using any languages like Python) and then execute the graph in C++, which is much more efficiently than if the same calculations were to be performed directly in Python.
+
+TensorFlow can also automatically calculate the gradients that are needed to optimize the variables of the graph so as to make the model perform better. This is because the graph is a combination of simple mathematical expressions so the gradient of the entire graph can be calculated using the chain-rule for derivatives.
+
+A TensorFlow graph consists of the following parts which will be detailed below:
+
+Placeholder variables used for inputting data to the graph.
+Variables that are going to be optimized so as to make the convolutional network perform better.
+The mathematical formulas for the convolutional network.
+A cost measure that can be used to guide the optimization of the variables.
+An optimization method which updates the variables.
+A CNN architecture is formed by a stack of distinct layers that transform the input volume into an output volume (e.g. holding the class scores) through a differentiable function.
+
+
+
+So in our implementation, the first layer is to hold the images, then we built 3 Convolutional layers with 2 x 2 max-pooling and Rectified Linear Unit (ReLU). The input is a 4-dim tensor with the following dimensions:
+
+Image number.
+Y-axis of each image.
+X-axis of each image.
+Channels of each image.
+The output is another 4-dim tensor with the following dimensions:
+
+Image number, same as input.
+Y-axis of each image. If 2x2 pooling is used, then the height and width of the input images is divided by 2.
+X-axis of each image. Ditto.
+Channels produced by the convolutional filters.
+And then we built 2 Fully-Connected Layers at the end of the network. The input is a 2-dim tensor of shape [num_images, num_inputs]. The output is a 2-dim tensor of shape [num_images, num_outputs]
+
+However to connect Convolutional layers and Fully-Connected Layers we need a Flatten Layer to reduce the 4-dim tensor to 2-dim which can be used as input to the fully-connected layer.
+
+The very end of CNN is always a softmax layer which normalize the output from Fully-connected layer so that each element is limited between 0 and 1 and all the elements sum to 1. 
+
+To optimize the training result we need a cost measure and try to minimize it every iteration. The Cost function we used here is cross entropy (called from tf.nn.oftmax_cross_entropy_with_logits()), and take the average of cross-entropy for all the image classifications. The Optimization Method is tf.train.AdamOptimizer() which is an advanced form of Gradient Descent. The is a parameter learning rate which could be adjusted.
+
+The third method: Retrain Inception V3 Modern object recognition models have millions of parameters and can take weeks to fully train. Transfer learning is a technique that shortcuts a lot of this work by taking a fully-trained model for a set of categories like ImageNet, and retrains from the existing weights for new classes. Though it's not as good as a full training run, this is surprisingly effective for many applications, and can be run in as little as thirty minutes on a laptop, without requiring a GPU. For this part of implementation, we followed the instruction here: link.
+
+First we need to get the pre-trained model, remove the old top layer, and trains a new one on the dataset we have. None of the cat breeds were in the original ImageNet classes the full network was trained on. The magic of transfer learning is that lower layers that have been trained to distinguish between some objects can be reused for many recognition tasks without any alteration. Then we analyzes all the images on disk and calculates the bottleneck values for each of them. See details about 'bottleneck' here: link. Because every image is reused multiple times during training and calculating each bottleneck takes a significant amount of time, it speeds things up to cache these bottleneck values on disk so they don't have to be repeatedly recalculated.
+
+The script will run 4,000 training steps. Each step chooses ten images at random from the training set, finds their bottlenecks from the cache, and feeds them into the final layer to get predictions. Those predictions are then compared against the actual labels to update the final layer's weights through the back-propagation process.
+
+Experiments
+Dataset
+The Oxford-IIIT Pet Dataset: link
+
+There are 25 breeds of dog and 12 breeds of cat. Each breed has 200 images.
+
+We only used 10 cat breeds in our project. 
+
+The classes we used here is ['Sphynx','Siamese','Ragdoll','Persian','Maine-Coon','British-shorthair','Bombay','Birman','Bengal','Abyssinian']
+
+So we have totally 2000 images in our dataset. The sizes are different with each other. But we resized them into fixed sizes like 64 x 64 or 128 x 128.
+
+Preprocessing
+In this project we mainly used OpenCV for precessing the image data like read the image into array and reshape into the size we need.
+
+A common way of improving the results of image training is by deforming, cropping, or brightening the training inputs in random ways. This has the advantage of expanding the effective size of the training data thanks to all the possible variations of the same images, and tends to help the network learn to cope with all the distortions that will occur in real-life uses of the classifier.
+
+
+
+See links here: https://github.com/aleju/imgaug.
+
+Evaluation
+The first method: The first part: Preprocess dataset and apply KNN, SVM and BP Neural Network with sklearn.
+
+In the program, there are many parameters could be adjusted: In image_to_feature_vector function, we set the size we desired is 128x128, we do have tried other size before like 8x8, 64x64, 256x256. We found that the bigger image size, the better the accuracy. But large image size also increase the execution time and memory it consumed. So we finally decided the image size to be 128x128 because its not too big but can also ensure the accuracy.
+
+In extract_color_histogram function, we set the number of bins per channel to 32, 32, 32. As the previous function, we tried 8, 8, 8, and 64, 64, 64, and higher number can result to higher result, as well as higher execution time. So we think 32, 32, 32 is appropriate.
+
+For the dataset, we tried 3 kinds of datasets. The first one is the sub-dataset with 400 images, 2 labels. The second one is the sub-dataset with 1000 images, 5 labels. And the last one is the whole dataset with 1997 images, 10 labels. And we parsed the different dataset as arguments in the program.
+
+In KNeighborsClassifier, we only changed the number of neighbors and stored the result for the best K for each dataset. All the other parameters we set as default.
+
+In MLPClassifier, we set one hidden layer with 50 neurons. We do have tested multiple hidden layers, but it seems has no significant change in the final result. And the maximum iteration time is 1000, with tolerance 1e-4, in order to make sure it converged. And set L2 penalty parameter alpha to default value, random state to 1, solver to ‘sgd’ with learning rate 0.1.
+
+In SVC, maximum iteration time is 1000, and class weight is ‘balanced’.
+
+The running time for our program is not very long, it takes about 3 to 5 minutes from 2 labels dataset to 10 labels dataset.
+
+The second method: Built CNN with TensorFlow
+
+It takes a long time to calculate the gradient of the model using the entirety of a large dataset . We therefore only use a small batch of images in each iteration of the optimizer. The batch size is normally 32 or 64. The dataset is divided into training set contains 1600 images, validation set contains 400 images, and test set contains 300 images.
+
+There are many parameters could be adjusted.
+
+First is the learning rate. A good learning rate is easy find as long as it's small enough that could converge and big enough that it won't make the program too slow. We chose 1 x 10^-4.
+
+The second is the size of images we feed to the network. We tried 64*64 and 128 * 128. It turns out that the bigger images, the better accuracy we could get. However the exchange is running time.
+
+And then is the layers and their shapes. However actually there are too many parameters can be adjusted so it's a very hard work to find the best values for all of them.
+
+According to many resources from internet, we learnt that the parameters choosing for building the network is pretty much rely on experience.
+
+At first we try to built a relatively complicated network. The parameters are showed below:
+
+  # Convolutional Layer 1.
+  filter_size1 = 5
+  num_filters1 = 64
+
+  # Convolutional Layer 2.
+  filter_size2 = 5
+  num_filters2 = 64
+
+  # Convolutional Layer 3.
+  filter_size3 = 5
+  num_filters3 = 128
+
+  # Fully-connected layer 1.
+  fc1_size = 256
+
+  # Fully-connected layer 2.
+  fc1_size = 256
+We used 3 Convolutional Layers and 2 Fully-connected layers, all of them are relatively complicated.
+
+However, the result is -- Overfitting. Only after a thousand iteration, our program get 100% training accuracy and only 30 % test accuracy. At first I'm pretty confused about why we got overfitting, and I tried to adjust parameters randomly, and things never getting better. Several days later, I happened to read a article by Google talking about a deep learning project conducted by Chinese researchers. Link . They pointed out that the research conducted by them is problematic. "One technical problem is that fewer than 2000 examples are insufficient to train and test a CNN like AlexNet without overfitting." So I realized that, first our dataset is actually small, second, our network is too complicated.
+
+Remember our dataset contains exactly 2000 images
+
+Then I tried to reduce the number layers and sizes of kernels. I tried many parameters, this is the final structure we used.
+
+  # Convolutional Layer 1.
+  filter_size1 = 5
+  num_filters1 = 64
+
+  # Convolutional Layer 2.
+  filter_size2 = 3
+  num_filters2 = 64
+
+  # Fully-connected layer 1.
+  fc1_size = 128             # Number of neurons in fully-connected layer.
+
+  # Fully-connected layer 2.
+  fc2_size = 128             # Number of neurons in fully-connected layer.
+
+  # Number of color channels for the images: 1 channel for gray-scale.
+  num_channels = 3
+We only used 2 Convolutional Layers with small shapes and 2 Fully-connected layers. The result was not that good, we still get overfitting after 4000 iterations, however the test result was 10% better than before.
+
+We're still finding a way to deal with it, however the obvious reason is that our dataset is insufficient, and we don't have enough time to make more improvement.
+
+As a result, we roughly achieved 43% accuracy after 5000 iterations, and the running time is over half an hour.
+
+PS: Actually we feel a little bit upset due to this result, we even didn't gain a sense of how long will a images training process be . So we found another standard dataset called CIFAR-10. Link.
+
+ The CIFAR-10 dataset consists of 60000 32x32 color images in 10 classes, with 6000 images per class. There are 50000 training images and 10000 test images.
+
+We used the same network constructed above, after 10 hours training, we got 78 % accuracy on test set.
+
+The third method: Retrain Inception V3 Same here, we randomly select a few images to train and select another batch a images for validation.
+
+There are many parameters could be adjusted.
+
+First is training steps, the default is 4000, we can try more or try a smaller one if we could get a reasonable result earlier.
+
+The --learning rate controls the magnitude of the updates to the final layer during training. Intuitively if this is smaller then the learning will take longer, but it can end up helping the overall precision. The --**train batch **size controls how many images are examined during one training step, and because the learning rate is applied per batch we'll need to reduce it if you have larger batches to get the same overall effect.
+
+Since for deep learning task, the running time is usually pretty long, we won't hope to know our model is actually bad after hours of training. So we report validation accuracy frequently. By this way we can also avoid overfitting. The split is putting 80% of the images into the main training set, keeping 10% aside to run as validation frequently during training, and then have a final 10% that are used less often as a testing set to predict the real-world performance of the classifier.
+
+Result
+The first method: Preprocess dataset and apply KNN, SVM and BP Neural Network with sklearn.
+
+The results are in the following chart. Because the SVM result is very bad, even below the random guessing (1/ # of labels), we did not provide the result of that.
+
+
+
+From the result we can see:
+
+In k-NN, the raw pixel accuracy and histogram accuracy are relatively same. In 5 labels sub-dataset the histogram accuracy is a little bit higher than raw pixel, but over all, the raw pixel shows better result.
+
+In the neural network MLP classifier, the raw pixel accuracy is much lower than histogram accuracy. For the whole dataset(10 labels), the raw pixel accuracy even lower than random guessing.
+
+All these 2 sklearn methods do not give very good performance, the accuracy for recognizing the right category is only about 24% in the whole dataset (10 labels dataset). These results reveal that using sklearn methods for image recognition are not good enough. They are not able to give good performance for the complex images with many categories. But when comparing to the random guessing, they do have made some improvement, but not enough.
+
+Based on the results, we found that in order to improve the accuracy, its necessary to use some deep learning method.
+
+The second method: Built CNN with TensorFlow As we said above, we could not get a good result due to overfitting.
+
+
+
+It normally takes half an hour to train, however since the result is overfitting, we think this running time is not valuable. After comparing with method 1 we can see that: although the CNN overfits the training data, we still get better result than method 1.
+
+The third method: Retrain Inception V3
+
+
+
+The whole training progress takes no more than 10 mins. And we got extremely good results. We can actually see the power of deep learning and transfer learning.
+
+Demo: 
+
+Conclusion
+Based the comparison above, we can see that:
+
+The methods we learnt in class are not enough for some specific task like image classification.
+Although we got overfitting in CNN part, it's still better than those methods learnt in class on image classification problem.
+Transfer Learning is pretty efficient and powerful on image classification problem. It's accurate and fast enough to finish training in a short time without GPU. And it also does a good job to against overfitting even though you have a small dataset.
+We learnt some very important experience for image classification task. This kind of task is pretty different from other tasks we did in class. The dataset is relatively large and not sparse, the network are complicated, so the running time would be pretty long if we don't use GPU.
+
+Crop or resize images to make them smaller.
+Randomly choosing a small batch for training every iteration.
+Randomly choosing a small batch in validation set for validation, report validation score frequently during training process.
+Try using Image Augmentation to convert a set of input images into a new, much larger set of slightly altered images.
+For image classification task, we need larger dataset than 200 x 10, the CIFAR10 dataset contains 60000 images.
+More complicated network needs more dataset to train.
+Be careful of overfitting.
